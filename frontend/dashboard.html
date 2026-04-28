@@ -1,76 +1,301 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-
-<title>PharmaFlow Dashboard</title>
-
-<link rel="stylesheet" href="css/style.css">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PharmaFlow - Pharmacy Management System</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
 <body>
 
-<div class="sidebar">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2><i class="fas fa-pills"></i> PharmaFlow</h2>
+        <ul>
+            <li class="active" data-page="dashboard"><i class="fas fa-home"></i> Dashboard</li>
+            <li data-page="medicines"><i class="fas fa-capsules"></i> Medicines</li>
+            <li data-page="patients"><i class="fas fa-users"></i> Patients</li>
+            <li data-page="hospitals"><i class="fas fa-hospital"></i> Hospitals</li>
+            <li data-page="dealers"><i class="fas fa-truck"></i> Dealers</li>
+            <li data-page="stores"><i class="fas fa-store"></i> Stores</li>
+            <li data-page="doctors"><i class="fas fa-user-md"></i> Doctors</li>
+            <li data-page="transactions"><i class="fas fa-receipt"></i> Transactions</li>
+            <li data-page="inventory"><i class="fas fa-boxes"></i> Inventory</li>
+        </ul>
+    </div>
 
-<h2>PharmaFlow</h2>
+    <!-- Main Content -->
+    <div class="main">
+        
+        <!-- Header -->
+        <div class="header">
+            <h1 id="pageTitle">Dashboard</h1>
+            <div class="search-box">
+                <input type="text" id="globalSearch" placeholder="Search...">
+                <i class="fas fa-search"></i>
+            </div>
+        </div>
 
-<ul>
-<li>Dashboard</li>
-<li>Medicines</li>
-<li>Inventory</li>
-<li>Billing</li>
-</ul>
+        <!-- Message Container -->
+        <div id="messageContainer"></div>
 
-</div>
+        <!-- DASHBOARD PAGE -->
+        <div id="dashboard" class="page-content">
+            <div class="cards">
+                <div class="card">
+                    <i class="fas fa-capsules"></i>
+                    <h3>Total Medicines</h3>
+                    <p id="totalMedicines">0</p>
+                </div>
+                <div class="card">
+                    <i class="fas fa-store"></i>
+                    <h3>Total Stores</h3>
+                    <p id="totalStores">0</p>
+                </div>
+                <div class="card">
+                    <i class="fas fa-truck"></i>
+                    <h3>Total Dealers</h3>
+                    <p id="totalDealers">0</p>
+                </div>
+                <div class="card">
+                    <i class="fas fa-users"></i>
+                    <h3>Total Patients</h3>
+                    <p id="totalPatients">0</p>
+                </div>
+                <div class="card">
+                    <i class="fas fa-dollar-sign"></i>
+                    <h3>Total Sales (INR)</h3>
+                    <p id="totalSales">₹0</p>
+                </div>
+                <div class="card warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Low Stock Items</h3>
+                    <p id="lowStock">0</p>
+                </div>
+            </div>
 
+            <div class="dashboard-grid">
+                <div class="panel">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Low Stock Alerts</h3>
+                    <div id="lowStockTable"></div>
+                </div>
+                <div class="panel">
+                    <h3><i class="fas fa-clock"></i> Recent Transactions</h3>
+                    <div id="recentTransactions"></div>
+                </div>
+            </div>
+        </div>
 
-<div class="main">
+        <!-- MEDICINES PAGE -->
+        <div id="medicines" class="page-content hidden">
+            <div class="toolbar">
+                <button class="btn btn-primary" onclick="showForm('medicine')">
+                    <i class="fas fa-plus"></i> Add Medicine
+                </button>
+                <input type="text" id="medicineSearch" placeholder="Search medicines..." onkeyup="filterTable('medicineTable', this.value)">
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Composition</th>
+                        <th>Cost (INR)</th>
+                        <th>Mfg Date</th>
+                        <th>Exp Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="medicineTable"></tbody>
+            </table>
+        </div>
 
-<h1>Dashboard</h1>
+        <!-- PATIENTS PAGE -->
+        <div id="patients" class="page-content hidden">
+            <div class="toolbar">
+                <button class="btn btn-primary" onclick="showForm('patient')">
+                    <i class="fas fa-plus"></i> Add Patient
+                </button>
+                <input type="text" id="patientSearch" placeholder="Search patients..." onkeyup="filterTable('patientTable', this.value)">
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Address</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="patientTable"></tbody>
+            </table>
+        </div>
 
-<div class="cards">
+        <!-- HOSPITALS PAGE -->
+        <div id="hospitals" class="page-content hidden">
+            <div class="toolbar">
+                <button class="btn btn-primary" onclick="showForm('hospital')">
+                    <i class="fas fa-plus"></i> Add Hospital
+                </button>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Address</th>
+                        <th>Phone</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="hospitalTable"></tbody>
+            </table>
+        </div>
 
-<div class="card">
-<h3>Total Medicines</h3>
-<p id="totalMedicines">0</p>
-</div>
+        <!-- DEALERS PAGE -->
+        <div id="dealers" class="page-content hidden">
+            <div class="toolbar">
+                <button class="btn btn-primary" onclick="showForm('dealer')">
+                    <i class="fas fa-plus"></i> Add Dealer
+                </button>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Address</th>
+                        <th>Phone</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="dealerTable"></tbody>
+            </table>
+        </div>
 
-<div class="card">
-<h3>Total Stores</h3>
-<p>10</p>
-</div>
+        <!-- STORES PAGE -->
+        <div id="stores" class="page-content hidden">
+            <div class="toolbar">
+                <button class="btn btn-primary" onclick="showForm('store')">
+                    <i class="fas fa-plus"></i> Add Store
+                </button>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Address</th>
+                        <th>Contact</th>
+                        <th>Manager</th>
+                        <th>License</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="storeTable"></tbody>
+            </table>
+        </div>
 
-<div class="card">
-<h3>Total Dealers</h3>
-<p>11</p>
-</div>
+        <!-- DOCTORS PAGE -->
+        <div id="doctors" class="page-content hidden">
+            <div class="toolbar">
+                <button class="btn btn-primary" onclick="showForm('doctor')">
+                    <i class="fas fa-plus"></i> Add Doctor
+                </button>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Doc ID</th>
+                        <th>Hospital ID</th>
+                        <th>Name</th>
+                        <th>Specialization</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="doctorTable"></tbody>
+            </table>
+        </div>
 
-</div>
+        <!-- TRANSACTIONS PAGE -->
+        <div id="transactions" class="page-content hidden">
+            <div class="toolbar">
+                <button class="btn btn-primary" onclick="showForm('transaction')">
+                    <i class="fas fa-plus"></i> New Transaction
+                </button>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Bill ID</th>
+                        <th>Patient</th>
+                        <th>Medicine</th>
+                        <th>Store</th>
+                        <th>Qty</th>
+                        <th>Total</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="transactionTable"></tbody>
+            </table>
+        </div>
 
+        <!-- INVENTORY PAGE -->
+        <div id="inventory" class="page-content hidden">
+            <div class="toolbar">
+                <button class="btn btn-primary" onclick="showForm('inventory')">
+                    <i class="fas fa-plus"></i> Add Stock
+                </button>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Medicine</th>
+                        <th>Store</th>
+                        <th>Quantity</th>
+                        <th>Expiry Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="inventoryTable"></tbody>
+            </table>
+        </div>
 
-<h2>Medicines List</h2>
+    </div>
 
-<table>
+    <!-- Modal Form -->
+    <div id="modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">Add New</h2>
+            <form id="crudForm" onsubmit="handleSubmit(event)">
+                <div id="formFields"></div>
+                <button type="submit" class="btn btn-primary">Save</button>
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+            </form>
+        </div>
+    </div>
 
-<thead>
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal hidden">
+        <div class="modal-content small">
+            <h2>Confirm Delete</h2>
+            <p>Are you sure you want to delete this record?</p>
+            <div class="modal-actions">
+                <button class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+                <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
 
-<tr>
-<th>ID</th>
-<th>Name</th>
-<th>Composition</th>
-<th>Price</th>
-</tr>
-
-</thead>
-
-<tbody id="medicineTable"></tbody>
-
-</table>
-
-</div>
-
-<script src="js/script.js"></script>
-
+    <script src="js/script.js"></script>
 </body>
+
 </html>
