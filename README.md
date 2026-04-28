@@ -1,4 +1,4 @@
-3# Pharmacy Management System
+Pharmacy Management System
 
 A comprehensive full-stack pharmacy management system built with MySQL, Node.js, and vanilla JavaScript. Manage medicines, inventory, patients, transactions, and more with full CRUD operations.
 
