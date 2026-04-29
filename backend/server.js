@@ -580,3 +580,168 @@ app.get("/api/analytics/revenue-trend", (req, res) => {
 app.listen(PORT, () => {
     console.log(" Server running on http://localhost:3000");
 });
+
+// ============================================================
+// VIEWS APIs - Business Intelligence & Reporting
+// ============================================================
+
+// View 1: Store inventory with stock status
+app.get("/api/views/store-inventory", (req, res) => {
+    db.query("SELECT * FROM v_store_inventory", (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(result);
+    });
+});
+
+// View 2: Monthly revenue per store
+app.get("/api/views/monthly-revenue", (req, res) => {
+    db.query("SELECT * FROM v_monthly_revenue ORDER BY month DESC", (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(result);
+    });
+});
+
+// View 3: Patient purchase history
+app.get("/api/views/patient-history", (req, res) => {
+    db.query("SELECT * FROM v_patient_history ORDER BY pur_date DESC", (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(result);
+    });
+});
+
+// View 4: Store sales summary
+app.get("/api/views/store-sales", (req, res) => {
+    db.query("SELECT * FROM v_store_sales", (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(result);
+    });
+});
+
+// View 5: Daily transactions
+app.get("/api/views/daily-transactions", (req, res) => {
+    db.query("SELECT * FROM v_daily_transactions", (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(result);
+    });
+});
+
+// View 6: Low stock items
+app.get("/api/views/low-stock", (req, res) => {
+    db.query("SELECT * FROM v_low_stock", (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(result);
+    });
+});
+
+// View 7: Expired medicines
+app.get("/api/views/expired-medicines", (req, res) => {
+    db.query("SELECT * FROM v_expired_medicines", (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(result);
+    });
+});
+
+// View 8: Dealer performance
+app.get("/api/views/dealer-performance", (req, res) => {
+    db.query("SELECT * FROM v_dealer_performance", (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(result);
+    });
+});
+
+// ============================================================
+// STORED PROCEDURES APIs - Business Logic
+// ============================================================
+
+// Procedure 1: Generate detailed bill
+app.get("/api/procedures/generate-bill", (req, res) => {
+    const { bill_id, pat_id } = req.query;
+    if (!bill_id || !pat_id) {
+        return res.status(400).json({ error: "bill_id and pat_id are required" });
+    }
+    db.query("CALL sp_generate_bill(?, ?)", [bill_id, pat_id], (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(result);
+    });
+});
+
+// Procedure 2: Get medicines expiring soon
+app.get("/api/procedures/expiring-soon", (req, res) => {
+    const days = req.query.days || 30;
+    db.query("CALL sp_expiring_soon(?)", [days], (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(result);
+    });
+});
+
+// Procedure 3: Add transaction with stock validation
+app.post("/api/procedures/add-transaction", (req, res) => {
+    const { bill_id, pat_id, store_id, med_id, quantity, pur_date } = req.body;
+    
+    if (!bill_id || !pat_id || !store_id || !med_id || !quantity || !pur_date) {
+        return res.status(400).json({ error: "All fields are required" });
+    }
+    
+    db.query("CALL sp_add_transaction(?, ?, ?, ?, ?, ?)", 
+        [bill_id, pat_id, store_id, med_id, quantity, pur_date], 
+        (err, result) => {
+            if (err) return res.status(500).json({ error: err.message });
+            res.json({ message: "Transaction added successfully", data: result });
+        }
+    );
+});
+
+// Procedure 4: Update stock
+app.post("/api/procedures/update-stock", (req, res) => {
+    const { med_id, store_id, quantity, operation } = req.body;
+    
+    if (!med_id || !store_id || !quantity || !operation) {
+        return res.status(400).json({ error: "med_id, store_id, quantity, and operation are required" });
+    }
+    
+    db.query("CALL sp_update_stock(?, ?, ?, ?)", 
+        [med_id, store_id, quantity, operation], 
+        (err, result) => {
+            if (err) return res.status(500).json({ error: err.message });
+            res.json({ message: "Stock updated successfully", data: result });
+        }
+    );
+});
+
+// Procedure 5: Low stock report
+app.get("/api/procedures/low-stock-report", (req, res) => {
+    const threshold = req.query.threshold || 50;
+    db.query("CALL sp_low_stock_report(?)", [threshold], (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(result);
+    });
+});
+
+// Procedure 6: Patient analysis
+app.get("/api/procedures/patient-analysis", (req, res) => {
+    const pat_id = req.query.pat_id;
+    if (!pat_id) {
+        return res.status(400).json({ error: "pat_id is required" });
+    }
+    db.query("CALL sp_patient_analysis(?)", [pat_id], (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(result);
+    });
+});
+
+// Procedure 7: Restock from dealer
+app.post("/api/procedures/restock", (req, res) => {
+    const { retail_id, med_id, store_id, dealer_id, batchno, quantity } = req.body;
+    
+    if (!retail_id || !med_id || !store_id || !dealer_id || !batchno || !quantity) {
+        return res.status(400).json({ error: "All fields are required" });
+    }
+    
+    db.query("CALL sp_restock(?, ?, ?, ?, ?, ?)", 
+        [retail_id, med_id, store_id, dealer_id, batchno, quantity], 
+        (err, result) => {
+            if (err) return res.status(500).json({ error: err.message });
+            res.json({ message: "Stock added successfully", data: result });
+        }
+    );
+});
