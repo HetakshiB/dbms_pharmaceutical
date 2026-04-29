@@ -83,7 +83,7 @@ app.get("/api/medicines/:id", (req, res) => {
 // CREATE medicine
 app.post("/api/medicines", (req, res) => {
     const { name, composition, mfg_date, exp_date, cost_per_tab } = req.body;
-    
+
     if (!name || !mfg_date || !exp_date || !cost_per_tab) {
         return res.status(400).json({ error: "Missing required fields" });
     }
@@ -99,7 +99,7 @@ app.post("/api/medicines", (req, res) => {
 app.put("/api/medicines/:id", (req, res) => {
     const { name, composition, mfg_date, exp_date, cost_per_tab } = req.body;
     const sql = "UPDATE MEDICINE SET name = ?, composition = ?, mfg_date = ?, exp_date = ?, cost_per_tab = ? WHERE med_id = ?";
-    
+
     db.query(sql, [name, composition, mfg_date, exp_date, cost_per_tab, req.params.id], (err, result) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json({ message: "Medicine updated successfully" });
@@ -134,7 +134,7 @@ app.get("/api/patients/:id", (req, res) => {
 
 app.post("/api/patients", (req, res) => {
     const { name, address, phone, email } = req.body;
-    
+
     if (!name || !phone) {
         return res.status(400).json({ error: "Name and phone are required" });
     }
@@ -149,7 +149,7 @@ app.post("/api/patients", (req, res) => {
 app.put("/api/patients/:id", (req, res) => {
     const { name, address, phone, email } = req.body;
     const sql = "UPDATE PATIENT SET name = ?, address = ?, phone = ?, email = ? WHERE pat_id = ?";
-    
+
     db.query(sql, [name, address, phone, email, req.params.id], (err, result) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json({ message: "Patient updated successfully" });
@@ -183,7 +183,7 @@ app.get("/api/hospitals/:id", (req, res) => {
 
 app.post("/api/hospitals", (req, res) => {
     const { hos_id, name, address, phone } = req.body;
-    
+
     if (!hos_id || !name) {
         return res.status(400).json({ error: "Hospital ID and name are required" });
     }
@@ -198,7 +198,7 @@ app.post("/api/hospitals", (req, res) => {
 app.put("/api/hospitals/:id", (req, res) => {
     const { name, address, phone } = req.body;
     const sql = "UPDATE HOSPITAL SET name = ?, address = ?, phone = ? WHERE hos_id = ?";
-    
+
     db.query(sql, [name, address, phone, req.params.id], (err, result) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json({ message: "Hospital updated successfully" });
@@ -225,7 +225,7 @@ app.get("/api/dealers", (req, res) => {
 
 app.post("/api/dealers", (req, res) => {
     const { name, address, phone } = req.body;
-    
+
     if (!name) {
         return res.status(400).json({ error: "Dealer name is required" });
     }
@@ -240,7 +240,7 @@ app.post("/api/dealers", (req, res) => {
 app.put("/api/dealers/:id", (req, res) => {
     const { name, address, phone } = req.body;
     const sql = "UPDATE DEALER SET name = ?, address = ?, phone = ? WHERE dealer_id = ?";
-    
+
     db.query(sql, [name, address, phone, req.params.id], (err, result) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json({ message: "Dealer updated successfully" });
@@ -267,7 +267,7 @@ app.get("/api/stores", (req, res) => {
 
 app.post("/api/stores", (req, res) => {
     const { store_id, name, address, contact, store_man, license_no } = req.body;
-    
+
     if (!store_id || !name) {
         return res.status(400).json({ error: "Store ID and name are required" });
     }
@@ -282,7 +282,7 @@ app.post("/api/stores", (req, res) => {
 app.put("/api/stores/:id", (req, res) => {
     const { name, address, contact, store_man, license_no } = req.body;
     const sql = "UPDATE STORES SET name = ?, address = ?, contact = ?, store_man = ?, license_no = ? WHERE store_id = ?";
-    
+
     db.query(sql, [name, address, contact, store_man, license_no, req.params.id], (err, result) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json({ message: "Store updated successfully" });
@@ -309,7 +309,7 @@ app.get("/api/doctors", (req, res) => {
 
 app.post("/api/doctors", (req, res) => {
     const { doc_id, hos_id, doc_name, specialization } = req.body;
-    
+
     if (!doc_id || !hos_id || !doc_name) {
         return res.status(400).json({ error: "Doctor ID, Hospital ID and name are required" });
     }
@@ -324,7 +324,7 @@ app.post("/api/doctors", (req, res) => {
 app.put("/api/doctors/:id/:hosId", (req, res) => {
     const { doc_name, specialization } = req.body;
     const sql = "UPDATE DOCTOR SET doc_name = ?, specialization = ? WHERE doc_id = ? AND hos_id = ?";
-    
+
     db.query(sql, [doc_name, specialization, req.params.id, req.params.hosId], (err, result) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json({ message: "Doctor updated successfully" });
@@ -344,10 +344,10 @@ app.delete("/api/doctors/:id/:hosId", (req, res) => {
 
 app.get("/api/transactions", (req, res) => {
     const sql = `
-        SELECT T.*, M.name as med_name, P.name as pat_name, S.name as store_name 
-        FROM TRANSACTIONS T 
-        LEFT JOIN MEDICINE M ON T.med_id = M.med_id 
-        LEFT JOIN PATIENT P ON T.pat_id = P.pat_id 
+        SELECT T.*, M.name as med_name, P.name as pat_name, S.name as store_name
+        FROM TRANSACTIONS T
+        LEFT JOIN MEDICINE M ON T.med_id = M.med_id
+        LEFT JOIN PATIENT P ON T.pat_id = P.pat_id
         LEFT JOIN STORES S ON T.store_id = S.store_id
         ORDER BY T.pur_date DESC, T.bill_id DESC
     `;
@@ -360,31 +360,31 @@ app.get("/api/transactions", (req, res) => {
 // CREATE transaction with validation
 app.post("/api/transactions", (req, res) => {
     const { bill_id, pat_id, store_id, med_id, quantity, pur_date } = req.body;
-    
+
     // Validate required fields
     if (!bill_id || !pat_id || !store_id || !med_id || !quantity || !pur_date) {
         return res.status(400).json({ error: "All fields are required" });
     }
 
-    // Check stock availability
+    // TRIGGER: Inventory Validation - Check stock availability before transaction
     const checkStock = "SELECT quantity FROM QUANT WHERE med_id = ? AND store_id = ?";
     db.query(checkStock, [med_id, store_id], (err, stockResult) => {
         if (err) return res.status(500).json({ error: err.message });
-        
+
         const availableStock = stockResult.length > 0 ? stockResult[0].quantity : 0;
-        
+
         if (availableStock < quantity) {
             return res.status(400).json({ error: `Insufficient stock! Available: ${availableStock}` });
         }
 
-        // Check medicine expiry
+        // TRIGGER: Expiry Date Validation - Check medicine expiry before transaction
         const checkExpiry = "SELECT exp_date, cost_per_tab FROM MEDICINE WHERE med_id = ?";
         db.query(checkExpiry, [med_id], (err, medResult) => {
             if (err) return res.status(500).json({ error: err.message });
-            
+
             const expDate = new Date(medResult[0].exp_date);
             const today = new Date();
-            
+
             if (expDate < today) {
                 return res.status(400).json({ error: "Cannot sell expired medicine!" });
             }
@@ -395,13 +395,13 @@ app.post("/api/transactions", (req, res) => {
             const insertSql = "INSERT INTO TRANSACTIONS (bill_id, pat_id, store_id, med_id, quantity, pur_date, total) VALUES (?, ?, ?, ?, ?, ?, ?)";
             db.query(insertSql, [bill_id, pat_id, store_id, med_id, quantity, pur_date, total], (err, result) => {
                 if (err) return res.status(500).json({ error: err.message });
-                
-                // Update stock (subtract quantity)
+
+                // TRIGGER: Atomic Deduction - Update stock (subtract quantity) after successful transaction
                 const updateStock = "UPDATE QUANT SET quantity = quantity - ? WHERE med_id = ? AND store_id = ?";
                 db.query(updateStock, [quantity, med_id, store_id], (err) => {
                     if (err) console.error("Stock update error:", err);
                 });
-                
+
                 res.json({ message: "Transaction completed successfully!", total });
             });
         });
@@ -410,21 +410,21 @@ app.post("/api/transactions", (req, res) => {
 
 app.delete("/api/transactions/:billId/:patId/:medId", (req, res) => {
     const { billId, patId, medId } = req.params;
-    
+
     // First get the transaction to restore stock
-    db.query("SELECT * FROM TRANSACTIONS WHERE bill_id = ? AND pat_id = ? AND med_id = ?", 
+    db.query("SELECT * FROM TRANSACTIONS WHERE bill_id = ? AND pat_id = ? AND med_id = ?",
         [billId, patId, medId], (err, result) => {
         if (err) return res.status(500).json({ error: err.message });
         if (result.length === 0) return res.status(404).json({ error: "Transaction not found" });
-        
+
         const trans = result[0];
-        
-        // Restore stock
+
+        // TRIGGER: Atomic Restore - Restore stock before deleting transaction
         db.query("UPDATE QUANT SET quantity = quantity + ? WHERE med_id = ? AND store_id = ?",
             [trans.quantity, trans.med_id, trans.store_id], (err) => {
             if (err) console.error("Stock restore error:", err);
         });
-        
+
         // Delete transaction
         db.query("DELETE FROM TRANSACTIONS WHERE bill_id = ? AND pat_id = ? AND med_id = ?",
             [billId, patId, medId], (err) => {
@@ -456,7 +456,7 @@ app.get("/api/inventory", (req, res) => {
 app.put("/api/inventory/:medId/:storeId", (req, res) => {
     const { quantity } = req.body;
     const sql = "UPDATE QUANT SET quantity = ? WHERE med_id = ? AND store_id = ?";
-    
+
     db.query(sql, [quantity, req.params.medId, req.params.storeId], (err, result) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json({ message: "Stock updated successfully" });
@@ -514,5 +514,5 @@ app.get("/", (req, res) => {
 
 // Start server
 app.listen(PORT, () => {
-    console.log("🚀 Server running on http://localhost:3000");
+    console.log(" Server running on http://localhost:3000");
 });
