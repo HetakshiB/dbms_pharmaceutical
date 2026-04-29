@@ -24,6 +24,7 @@
             <li data-page="doctors"><i class="fas fa-user-md"></i> Doctors</li>
             <li data-page="transactions"><i class="fas fa-receipt"></i> Transactions</li>
             <li data-page="inventory"><i class="fas fa-boxes"></i> Inventory</li>
+            <li data-page="analytics"><i class="fas fa-chart-line"></i> Analytics & Reports</li>
         </ul>
     </div>
 
@@ -266,6 +267,56 @@
                 </thead>
                 <tbody id="inventoryTable"></tbody>
             </table>
+        </div>
+
+        <!-- ANALYTICS PAGE -->
+        <div id="analytics" class="page-content hidden">
+            <div class="dashboard-grid" style="grid-template-columns: 1fr 1fr;">
+                <div class="panel">
+                    <h3><i class="fas fa-trophy"></i> Top 5 Best-Selling Medicines</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Medicine</th>
+                                <th>Total Sold</th>
+                                <th>Total Revenue</th>
+                            </tr>
+                        </thead>
+                        <tbody id="topMedicinesTable"></tbody>
+                    </table>
+                </div>
+
+                <div class="panel">
+                    <h3><i class="fas fa-money-bill-wave"></i> Top 10 Spending Patients</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Patient Name</th>
+                                <th>Total Visits</th>
+                                <th>Total Spent</th>
+                            </tr>
+                        </thead>
+                        <tbody id="topPatientsTable"></tbody>
+                    </table>
+                </div>
+                
+                <div class="panel" style="grid-column: span 2;">
+                    <h3><i class="fas fa-chart-line"></i> Last 12 Months Revenue Trend</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Month</th>
+                                <th>Total Bills</th>
+                                <th>Monthly Revenue</th>
+                                <th>MoM Change</th>
+                            </tr>
+                        </thead>
+                        <tbody id="revenueTrendTable"></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
     </div>

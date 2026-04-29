@@ -505,11 +505,75 @@ app.get("/api/search/patients", (req, res) => {
 });
 
 // ============================================================
-// Default route
+// DEFAULT ROUTE
 // ============================================================
 
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "../frontend/dashboard.html"));
+});
+
+// ============================================================
+// ADVANCED ANALYTICS APIs (From Proj-QUERY.sql)
+// ============================================================
+
+// 1. Top 5 Best-Selling Medicines (Window Functions)
+app.get("/api/analytics/top-medicines", (req, res) => {
+    const sql = `
+        SELECT M.med_id, M.name,
+               SUM(T.quantity) AS total_sold,
+               SUM(T.total) AS total_revenue,
+               RANK() OVER (ORDER BY SUM(T.quantity) DESC) AS sales_rank
+        FROM TRANSACTIONS T
+        JOIN MEDICINE M ON T.med_id = M.med_id
+        GROUP BY M.med_id, M.name
+        ORDER BY total_sold DESC
+        LIMIT 5;
+    `;
+    db.query(sql, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(result);
+    });
+});
+
+// 2. Patient Spending Analysis
+app.get("/api/analytics/patient-spending", (req, res) => {
+    const sql = `
+        SELECT P.pat_id, P.name,
+               SUM(T.total) AS total_spent,
+               COUNT(DISTINCT T.bill_id) AS visit_count,
+               AVG(T.total) AS avg_per_item,
+               DENSE_RANK() OVER (ORDER BY SUM(T.total) DESC) AS spending_rank
+        FROM PATIENT P
+        JOIN TRANSACTIONS T ON P.pat_id = T.pat_id
+        GROUP BY P.pat_id, P.name
+        ORDER BY total_spent DESC
+        LIMIT 10;
+    `;
+    db.query(sql, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(result);
+    });
+});
+
+// 3. Monthly Revenue Trend
+app.get("/api/analytics/revenue-trend", (req, res) => {
+    const sql = `
+        SELECT month, total_bills, revenue,
+               COALESCE(revenue - LAG(revenue) OVER (ORDER BY month), 0) AS revenue_change
+        FROM (
+            SELECT DATE_FORMAT(pur_date, '%Y-%m') AS month,
+                   COUNT(DISTINCT bill_id) AS total_bills,
+                   SUM(total) AS revenue
+            FROM TRANSACTIONS
+            GROUP BY DATE_FORMAT(pur_date, '%Y-%m')
+        ) monthly
+        ORDER BY month DESC
+        LIMIT 12;
+    `;
+    db.query(sql, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(result);
+    });
 });
 
 // Start server

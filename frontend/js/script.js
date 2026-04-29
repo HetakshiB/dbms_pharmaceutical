@@ -58,7 +58,8 @@ function navigateTo(page) {
         stores: "Stores",
         doctors: "Doctors",
         transactions: "Transactions",
-        inventory: "Inventory"
+        inventory: "Inventory",
+        analytics: "Advanced Analytics"
     };
     document.getElementById("pageTitle").textContent = titles[page] || page;
 
@@ -75,6 +76,7 @@ function navigateTo(page) {
         case "doctors": loadDoctors(); break;
         case "transactions": loadTransactions(); break;
         case "inventory": loadInventory(); break;
+        case "analytics": loadAnalytics(); break;
     }
 }
 
@@ -771,3 +773,66 @@ document.getElementById("globalSearch").addEventListener("keyup", (e) => {
         }
     }
 });
+
+// ========================================
+// Advanced Analytics Dashboard
+// ========================================
+
+function loadAnalytics() {
+    // 1. Fetch Top Medicines
+    fetch(`${API_BASE}/analytics/top-medicines`)
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.getElementById("topMedicinesTable");
+            tbody.innerHTML = "";
+            data.forEach(med => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>#${med.sales_rank}</strong></td>
+                        <td>${med.name}</td>
+                        <td>${med.total_sold} units</td>
+                        <td style="color: green; font-weight: bold;">${formatINR(med.total_revenue)}</td>
+                    </tr>`;
+            });
+        });
+
+    // 2. Fetch Top Spending Patients
+    fetch(`${API_BASE}/analytics/patient-spending`)
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.getElementById("topPatientsTable");
+            tbody.innerHTML = "";
+            data.forEach(pat => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>#${pat.spending_rank}</strong></td>
+                        <td>${pat.name}</td>
+                        <td>${pat.visit_count}</td>
+                        <td style="color: green; font-weight: bold;">${formatINR(pat.total_spent)}</td>
+                    </tr>`;
+            });
+        });
+
+    // 3. Monthly Revenue Trend
+    fetch(`${API_BASE}/analytics/revenue-trend`)
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.getElementById("revenueTrendTable");
+            tbody.innerHTML = "";
+            data.forEach(trend => {
+                const isPositive = trend.revenue_change >= 0;
+                const changeColor = isPositive ? "green" : "red";
+                const changeIcon = isPositive ? "▲" : "▼";
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${trend.month}</td>
+                        <td>${trend.total_bills}</td>
+                        <td>${formatINR(trend.revenue)}</td>
+                        <td style="color: ${changeColor};">
+                            ${changeIcon} ${formatINR(Math.abs(trend.revenue_change))}
+                        </td>
+                    </tr>`;
+            });
+        });
+}
