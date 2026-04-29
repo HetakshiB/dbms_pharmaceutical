@@ -388,7 +388,7 @@ function loadInventory() {
 function showForm(type) {
     editMode = null;
     editId = null;
-    
+
     const forms = {
         medicine: {
             title: "Add Medicine",
@@ -471,13 +471,13 @@ function showForm(type) {
     if (!form) return;
 
     document.getElementById("modalTitle").textContent = form.title;
-    
+
     let fieldsHtml = form.fields.map(f => `
         <div class="form-group">
             <label>${f.label}${f.required ? ' *' : ''}</label>
-            <${f.type === 'textarea' ? 'textarea' : 'input'} 
-                name="${f.name}" 
-                type="${f.type}" 
+            <${f.type === 'textarea' ? 'textarea' : 'input'}
+                name="${f.name}"
+                type="${f.type}"
                 ${f.step ? `step="${f.step}"` : ''}
                 ${f.required ? 'required' : ''}>
             </${f.type === 'textarea' ? 'textarea' : 'input'}>
@@ -582,7 +582,7 @@ function populateForm(type, data) {
     if (!form) return;
 
     document.getElementById("modalTitle").textContent = form.title;
-    
+
     let fieldsHtml = form.fields.map(f => {
         let value = data[f.name] || '';
         if (f.type === 'textarea') {
@@ -613,13 +613,13 @@ function closeModal() {
 
 function handleSubmit(e) {
     e.preventDefault();
-    
+
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData.entries());
 
     // Determine endpoint and method
     let endpoint, method;
-    
+
     if (editMode) {
         // Update
         if (editMode === "inventory") {
@@ -667,13 +667,13 @@ function deleteRecord(type, id) {
     deleteType = type;
     deleteId = id;
     document.getElementById("deleteModal").classList.remove("hidden");
-    
+
     document.getElementById("confirmDeleteBtn").onclick = () => confirmDelete();
 }
 
 function confirmDelete() {
     let endpoint;
-    
+
     if (deleteType === "medicine") endpoint = `${API_BASE}/medicines/${deleteId}`;
     else if (deleteType === "patient") endpoint = `${API_BASE}/patients/${deleteId}`;
     else if (deleteType === "hospital") endpoint = `${API_BASE}/hospitals/${deleteId}`;
@@ -713,14 +713,14 @@ function closeDeleteModal() {
 function showMessage(msg, type) {
     const container = document.getElementById("messageContainer");
     const icon = type === "success" ? "fa-check-circle" : "fa-exclamation-circle";
-    
+
     container.innerHTML = `
         <div class="message ${type}">
             <i class="fas ${icon}"></i>
             ${msg}
         </div>
     `;
-    
+
     // Auto hide after 3 seconds
     setTimeout(() => {
         container.innerHTML = "";
@@ -730,20 +730,20 @@ function showMessage(msg, type) {
 function filterTable(tableId, searchTerm) {
     const table = document.getElementById(tableId);
     const rows = table.getElementsByTagName("tr");
-    
+
     searchTerm = searchTerm.toLowerCase();
-    
+
     for (let i = 0; i < rows.length; i++) {
         const cells = rows[i].getElementsByTagName("td");
         let found = false;
-        
+
         for (let j = 0; j < cells.length; j++) {
             if (cells[j].textContent.toLowerCase().indexOf(searchTerm) > -1) {
                 found = true;
                 break;
             }
         }
-        
+
         rows[i].style.display = found ? "" : "none";
     }
 }
@@ -752,7 +752,7 @@ function filterTable(tableId, searchTerm) {
 document.getElementById("globalSearch").addEventListener("keyup", (e) => {
     const term = e.target.value.toLowerCase();
     if (term.length < 2) return;
-    
+
     // Search in current page table
     const activePage = document.querySelector(".page-content:not(.hidden)");
     if (activePage) {
@@ -823,7 +823,7 @@ function loadAnalytics() {
                 const isPositive = trend.revenue_change >= 0;
                 const changeColor = isPositive ? "green" : "red";
                 const changeIcon = isPositive ? "▲" : "▼";
-                
+
                 tbody.innerHTML += `
                     <tr>
                         <td>${trend.month}</td>
